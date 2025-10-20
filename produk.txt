@@ -1,0 +1,19 @@
+INSERT INTO "PRODUCT" ("Product_Name", "Price_IDR", "Stock_Quantity") VALUES ('Mawar Merah Klasik', 405000, 45),
+
+('Anggrek Bulan Putih', 225000, 20),
+
+('Bunga Matahari Jumbo', 83000, 60),
+
+('Lily Casablanca Harum', 90000, 32),
+
+('Anyelir Pink', 83000, 75),
+
+('Tulip Kuning Belanda', 285000, 15),
+
+('Gerbera Daisy Mix Warna', 150000, 90),
+
+('Peony Premium Import', 600000, 10),
+
+('Sedap Malam Putih', 38000, 110),
+
+('Buket Bunga Campuran Eksklusif', 750000, 5);
