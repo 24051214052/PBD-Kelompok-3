@@ -1,0 +1,10 @@
+insert into employee (Employee_Name, Employee_Address) values ('Brock O''Doherty', '988 American Court');
+insert into employee (Employee_Name, Employee_Address) values ('Staford Muldowney', '0 Lakeland Avenue');
+insert into employee (Employee_Name, Employee_Address) values ('Fidela Dodgshon', '52 Hoard Plaza');
+insert into employee (Employee_Name, Employee_Address) values ('Myrah Lissaman', '1925 Melody Junction');
+insert into employee (Employee_Name, Employee_Address) values ('Bertie Hornig', '2851 Westerfield Junction');
+insert into employee (Employee_Name, Employee_Address) values ('Molly Starrs', '5 Clove Alley');
+insert into employee (Employee_Name, Employee_Address) values ('Melany Fibbit', '162 Judy Pass');
+insert into employee (Employee_Name, Employee_Address) values ('Leta Birden', '72371 Golf Course Terrace');
+insert into employee (Employee_Name, Employee_Address) values ('Nikos Donnachie', '090 Paget Avenue');
+insert into employee (Employee_Name, Employee_Address) values ('Kesley Fullman', '6 Westport Crossing');
