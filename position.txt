@@ -1,0 +1,11 @@
+INSERT INTO POSITION (Position_Name, Salary) VALUES
+('Desainer', 3500000.00),
+('Kasir', 2000000.00),
+('Inventaris', 2200000.00),
+('Kurir', 1800000.00),
+('Admin Online', 2500000.00),
+('Florist Kreatif', 2000000.00),
+('Keuangan', 3000000.00),
+('Manajer Operasional Toko', 3500000.00),
+('Staff Penjualan', 3000000.00),
+('Asisten Florist', 3000000.00);
