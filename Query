@@ -1,103 +1,161 @@
-1. Query Gaji
-  SELECT 
-      e.employee_name, 
-      p.position_name, 
-      p.salary
-  FROM employee e
-  JOIN position p ON e.position_id = p.position_id
-  ORDER BY p.salary DESC, e.employee_name ASC;
+1 Gaji Karyawan
+SELECT e.employee_name, p.position_name, p.salary
+FROM employee e
+JOIN position p ON e.position_id = p.position_id
+WHERE p.salary = (
+    SELECT MAX(salary) FROM position
+);
 
-2. Query Barang yang sering dibeli pelanggan
-  SELECT
-    p.product_id,
-    p.product_name,
-  SUM(d.quantity_order) AS total_terjual   
-  FROM detail_order d
-  JOIN product p ON d.product_id = p.product_id
-  JOIN orders o ON d.order_id = o.order_id
-  JOIN customer c ON o.customer_id = c.customer_id
-  GROUP BY p.product_id, p.product_name
-  ORDER BY total_terjual DESC;
 
-3. Query barang yang sering disuplai supplier
-  SELECT
-    p.product_id,
-    p.product_name,
-    s.supplier_name,
-  SUM(dp.quantity_purchased) AS total_dibeli 
-  FROM detail_purchase dp
-  JOIN product p ON dp.product_id = p.product_id
-  JOIN purchase pc ON dp.purchase_id = pc.purchase_id
-  JOIN supplier s ON pc.supplier_id = s.supplier_id
-  GROUP BY p.product_id, p.product_name, s.supplier_name
-  ORDER BY total_dibeli DESC;
+2 Produk Yang sering dibeli
+SELECT p.product_name
+FROM product p
+WHERE p.product_id IN (
+    SELECT product_id
+    FROM detail_orders
+    GROUP BY product_id
+    ORDER BY COUNT(order_id) DESC
+    LIMIT 5
+);
 
-4. Query metode pembayaran yang sering dipakai
- SELECT 
-    p.payment_id,
-    p.payment_metode,
-    COUNT(o.payment_id) AS total_dipakai
-  FROM orders o
-  JOIN payment p ON o.payment_id = d.payment_id
-  GROUP BY p.payment_id, p.payment_metode
-  ORDER BY total_dipakai DESC;
+3 Barang yang sering dibeli dari supplier
+SELECT product_name
+FROM product
+WHERE product_id = (
+    SELECT product_id
+    FROM detail_purchase
+    GROUP BY product_id
+    ORDER BY SUM(quantity_purchase) DESC
+    LIMIT 1
+);
 
-5. query pelanggan yang membeli lebih dari 5 produk
-  SELECT
-    c.customer_id,
-    c.customer_name,
-    SUM(d.quantity_order) AS total_produk_dibeli
-  FROM orders o
-  JOIN detail_order d ON o.order_id = d.order_id
-  JOIN customer c ON o.customer_id = c.customer_id
-  GROUP BY c.customer_id, c.customer_name
-  HAVING SUM(d.quantity_order) > 5
-  ORDER BY total_produk_dibeli DESC;
+4 Metode pembayaran yang paling sering digunakan
+SELECT payment_method
+FROM payment
+WHERE payment_id = (
+    SELECT payment_id
+    FROM "order"
+    GROUP BY payment_id
+    ORDER BY COUNT(order_id) DESC
+    LIMIT 1
+);
 
-6. query supplier yang menyediakan lebih dari 5 produk
-  SELECT
-    s.supplier_id,
-    s.supplier_name,
-    s.supplier_contact,
-    s.supplier_address,
-    COUNT(DISTINCT p.product_id) AS jumlah_produk
-  FROM supplier s
-  JOIN purchase pc ON s.supplier_id = pc.supplier_id
-  JOIN detail_purchase dp ON pc.purchase_id = dp.purchase_id
-  JOIN product p ON dp.product_id = p.product_id
-  GROUP BY s.supplier_id, s.supplier_name, s.supplier_contact, s.supplier_address
-  HAVING COUNT(DISTINCT p.prorduct_id) > 5
-  ORDER BY jumlah_produk DESC;
- 
-7. Query Karyawan yang paling sering menangani pesanan
-  SELECT 
-    e.employee_id,
-    e.employee_name,
-    p.position_name,
-    COUNT(o.order_id) AS jumlah_order
-  FROM employee e
-  JOIN position p ON e.position_id = p.position_id
-  JOIN orders o ON e.employee_id = o.employee_id
-  WHERE p.position_name IN ('Kasir', 'Admin Online')
-  GROUP BY e.employee_id, e.employee_name, p.position_name
-  ORDER BY jumlah_order DESC;
+5 Daftar pelanggan yang membeli lebih dari 5 produk
+SELECT customer_name
+FROM customer
+WHERE customer_id IN (
+    SELECT customer_id
+    FROM orders o
+    JOIN detail_order op ON o.order_id = op.order_id
+    GROUP BY customer_id
+    HAVING COUNT(op.product_id) > 5
+);
 
-8. Query menampilkan barang berdasarkan harga
-  SELECT 
-    product_id,
-    product_name,
-    price_idr AS harga_produk,
-    stock_quantity
-  FROM product
-  ORDER BY price_idr DESC;
+6 Supplier yang menyediakan lebih dari 5 produk
+SELECT supplier_name
+FROM supplier
+WHERE supplier_id IN (
+    SELECT supplier_id
+    FROM product
+    GROUP BY supplier_id
+    HAVING COUNT(product_id) > 5
+);
 
-9.
-15. Query layanan pengiriman yang sering dipakai
-  SELECT 
-    d.delivery_id,
-    d.delivery_service,
-    COUNT(o.delivery_id) AS total_dipakai
-  FROM orders o
-  JOIN delivery d ON o.delivery_id = d.delivery_id
-  GROUP BY d.delivery_id, d.delivery_service
-  ORDER BY total_dipakai DESC;
+7 aryawan yang sering menangani banyak orderan
+SELECT employee_name
+FROM employee
+WHERE employee_id = (
+    SELECT employee_id
+    FROM orders
+    GROUP BY employee_id
+    ORDER BY COUNT(order_id) DESC
+    LIMIT 1
+);
+
+8 Produk berdasarkan harga (dari tinggi ke rendah)
+SELECT product_name, price_idr
+FROM product
+WHERE price_idr >= (
+    SELECT MIN(price_idr) FROM product
+)
+ORDER BY price_idr DESC;
+
+9 Produk dengan stok terbanyak hingga tersedikit
+SELECT product_name, stock_quantity
+FROM product
+WHERE stock_quantity >= (
+    SELECT MIN(stock_quantity) FROM product
+)
+ORDER BY stock_quantity DESC;
+
+10 Menghitung total biaya yang dikeluarkan untuk setiap supplier
+SELECT supplier_name,
+       (SELECT SUM(dp.quantity_purchase * dp.buying_price)
+        FROM purchase p
+		JOIN detail_purchase dp ON p.purchase_id = dp.purchase_id
+        WHERE p.supplier_id = s.supplier_id) AS total_biaya
+FROM supplier s;
+
+11 Total pendapatan dari seluruh pesanan yang selesai
+SELECT SUM(total)
+FROM (
+    SELECT SUM(p.price_idr * d.quantity_order) AS total
+    FROM orders o
+    JOIN detail_order d ON o.order_id = d.order_id
+    JOIN product p ON d.product_id = d.product_id
+    WHERE o.finished_date IS NOT NULL
+    GROUP BY o.order_id
+) AS sub;
+
+12 Pelanggan dengan transaksi nilai tertinggi
+SELECT customer_name
+FROM customer
+WHERE customer_id = (
+    SELECT customer_id
+    FROM orders o
+    JOIN detail_order d ON o.order_id = d.order_id
+    JOIN product p ON p.product_id = d.product_id
+    GROUP BY customer_id
+    ORDER BY SUM(p.price_idr * d.quantity_order) DESC
+    LIMIT 1
+);
+
+13 Produk dengan keuntungan tertinggi
+SELECT product_name,
+       (price_idr - (
+           SELECT AVG(buying_price)
+           FROM detail_purchase
+           WHERE product.product_id = detail_purchase.product_id
+       )) AS keuntungan
+FROM product
+ORDER BY keuntungan DESC
+LIMIT 1;
+
+
+14 Produk yang sering dibeli (paling laris)
+SELECT product_name
+FROM product
+WHERE product_id IN (
+    SELECT product_id
+    FROM detail_order
+    GROUP BY product_id
+    HAVING COUNT(order_id) = (
+        SELECT MAX(jumlah)
+        FROM (
+            SELECT COUNT(order_id) AS jumlah
+            FROM detail_order
+            GROUP BY product_id
+        ) AS sub
+    )
+);
+
+15 Delivery service yang sering digunakan
+SELECT delivery_service
+FROM delivery
+WHERE delivery_id = (
+    SELECT delivery_id
+    FROM orders
+    GROUP BY delivery_id
+    ORDER BY COUNT(order_id) DESC
+    LIMIT 1
+);
