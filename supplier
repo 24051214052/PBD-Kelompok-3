@@ -1,0 +1,11 @@
+INSERT INTO supplier (supplier_name, supplier_contact, supplier_address) VALUES
+( 'Floraverde Bunga Segar', '+66 825 829 413', '63052 Kinsman Court'),
+('Nusantara Flower Farm', '+351 162 858 907', '234621 Hansons Alley'),
+('Greenhouse Alam Asri', '+504 170 274 706', '36006 Spaight Circle'),
+( 'Kebun Bibit Pelangi', '+48 128 506 152', '47477 Weeping Birch Pass'),
+( 'Importir Anggrek Mewah', '+93 442 752 044', '48945 Hintze Hill'),
+( 'Bunga Hias Sentosa', '+998 855 136 984', '41168 Butterfield Point'),
+( 'Peralatan Florist Jaya', '+86 398 722 394', '54 Corscot Road'),
+( 'Pita & Aksesori Cantik', '+54 152 262 460', '6301 Redwing Center'),
+( 'Grosir Kawat & Vas', '+86 524 591 778', '165134 Northfield Crossing'),
+( 'Distributor Tanaman Pot', '+56 224 328 553', '738 Roth Street');
