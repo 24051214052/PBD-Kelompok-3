@@ -1,0 +1,59 @@
+from faker import Faker
+import psycopg2
+import random
+from datetime import timedelta
+
+# Inisialisasi Faker
+fake = Faker()
+
+# --- KONFIGURASI DATABASE ---
+conn = psycopg2.connect(
+    dbname="Flowristique",   # Ganti dengan nama database kamu
+    user="postgres",
+    password="12345",
+    host="localhost",
+    port="5432"
+)
+cur = conn.cursor()
+
+# ===============================
+# OPSIONAL: HAPUS DATA SEBELUMNYA
+# ===============================
+cur.execute("DELETE FROM orders;")
+print("[RESET] Semua data orders dihapus.")
+
+# ===============================
+# 1. BIKIN DATA DUMMY ORDERS
+# ===============================
+payment_methods = ["QRIS", "BCA Transfer", "Mandiri", "COD", "GoPay"]
+delivery_services = ["JNE", "J&T", "SiCepat", "GrabExpress", "GoSend"]
+status_list = ["Pending", "Diproses", "Dikirim", "Selesai", "Dibatalkan"]
+
+jumlah_data = 10000  # ubah jumlah sesuai kebutuhan
+
+for i in range(1, jumlah_data + 1):
+    order_id = f"O{str(i).zfill(5)}"
+    order_date = fake.date_between(start_date='-1y', end_date='today')
+    finished_date = order_date + timedelta(days=random.randint(1, 10))
+    payment_method = random.choice(payment_methods)
+    delivery_service = random.choice(delivery_services)
+    employee_id = f"E{str(random.randint(1, 10)).zfill(4)}"
+    customer_id = f"C{str(random.randint(1, 500)).zfill(4)}"
+    status_order = random.choice(status_list)
+
+    cur.execute("""
+        INSERT INTO orders (
+            order_id, order_date, finished_date,
+            payment_method, delivery_service,
+            employee_id, customer_id, status_order
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    """, (order_id, order_date, finished_date,
+          payment_method, delivery_service,
+          employee_id, customer_id, status_order))
+
+print(f"[OK] {jumlah_data} data orders berhasil dibuat.")
+conn.commit()
+cur.close()
+conn.close()
+print("[DONE] Semua proses selesai.")
