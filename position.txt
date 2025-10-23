@@ -1,4 +1,4 @@
-INSERT INTO POSITION (Position_Name, Salary) VALUES
+INSERT INTO position (position_name, salary) VALUES
 ('Desainer', 3500000.00),
 ('Kasir', 2000000.00),
 ('Inventaris', 2200000.00),
