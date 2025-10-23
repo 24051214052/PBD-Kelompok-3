@@ -1,4 +1,4 @@
-INSERT INTO Product (Product_Name, Price_IDR, Stock_Quantity) VALUES ('Mawar Merah Klasik', 405000, 45),
+INSERT INTO product (product_name, price_idr, stock_quantity) VALUES ('Mawar Merah Klasik', 405000, 45),
 
 ('Anggrek Bulan Putih', 225000, 20),
 
