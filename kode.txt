@@ -1,0 +1,72 @@
+from faker import Faker
+import psycopg2
+import random
+from datetime import timedelta
+
+fake = Faker()
+
+# --- KONFIGURASI DATABASE ---
+conn = psycopg2.connect(
+    dbname="Flowristique",
+    user="postgres",
+    password="12345",
+    host="localhost",
+    port="5432"
+)
+cur = conn.cursor()
+
+# --- KOSONGKAN SEMUA TABEL ---
+cur.execute("TRUNCATE TABLE orders, customer, employee RESTART IDENTITY CASCADE;")
+print("[RESET] Semua tabel dikosongkan.")
+
+# ===============================
+# 1. EMPLOYEE
+# ===============================
+positions = ["Desainer", "Kasir", "Driver", "Admin Online", "Inventaris"]
+for i in range(1, 11):
+    emp_id = f"E{str(i).zfill(4)}"
+    cur.execute("""
+        INSERT INTO employee (employee_id, employee_name, position)
+        VALUES (%s, %s, %s)
+    """, (emp_id, fake.name(), random.choice(positions)))
+print("[OK] Employee data inserted.")
+
+# ===============================
+# 2. CUSTOMER
+# ===============================
+for i in range(1, 201):
+    cust_id = f"C{str(i).zfill(4)}"
+    cur.execute("""
+        INSERT INTO customer (customer_id, customer_name, address, phone_number)
+        VALUES (%s, %s, %s, %s)
+    """, (cust_id, fake.name(), fake.address(), fake.phone_number()))
+print("[OK] Customer data inserted.")
+
+# ===============================
+# 3. ORDERS
+# ===============================
+payment_methods = ["QRIS", "BCA Transfer", "BRI Transfer", "Cash", "GoPay"]
+delivery_services = ["JNE", "Tiki", "GoSend", "GrabExpress", "SiCepat"]
+status_choices = ["Pending", "Proses", "Selesai", "Dibatalkan"]
+
+for i in range(1, 10001):
+    order_id = f"O{str(i).zfill(5)}"
+    order_date = fake.date_between(start_date="-2y", end_date="today")
+    finished_date = order_date + timedelta(days=random.randint(1, 5))
+    payment_method = random.choice(payment_methods)
+    delivery_service = random.choice(delivery_services)
+    employee_id = f"E{str(random.randint(1, 10)).zfill(4)}"
+    customer_id = f"C{str(random.randint(1, 200)).zfill(4)}"
+    status_order = random.choice(status_choices)
+
+    cur.execute("""
+        INSERT INTO orders (order_id, order_date, finished_date, payment_method, delivery_service, employee_id, customer_id, status_order)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    """, (order_id, order_date, finished_date, payment_method, delivery_service, employee_id, customer_id, status_order))
+
+print("[OK] 10.000 orders successfully inserted!")
+
+conn.commit()
+cur.close()
+conn.close()
+print("[DONE] Semua data berhasil dimasukkan.")
