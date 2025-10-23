@@ -1,0 +1,48 @@
+
+from faker import Faker
+import psycopg2     
+import random
+from datetime import timedelta
+
+fake = Faker()
+
+
+conn = psycopg2.connect(
+    dbname="FLOWRISTIQUE",   # Ganti dengan nama database kamu
+    user="postgres",
+    password="Khalil06",
+    host="localhost",
+    port="5432"
+)
+cur = conn.cursor()
+
+
+
+jumlah_data = 1000  
+
+for i in range(1, jumlah_data + 1):
+    product_id = f"P{str(random.randint(1, 10)).zfill(4)}"
+    purchase_id = f"PC{str(random.randint(1, 10000)).zfill(4)}"
+    quantity_purchase = random.randint(1,20)
+    buying_purchase = random.randint(50000, 500000)
+
+    
+
+    cur.execute(
+    """
+    INSERT INTO detail_purchase (
+        product_id, purchase_id, quantity_purchase, buying_purchase
+    )
+    VALUES (%s, %s, %s, %s)
+    """,
+    (
+        product_id, purchase_id, quantity_purchase, buying_purchase
+    ))
+
+
+
+print(f"[OK] {jumlah_data} data orders berhasil dibuat.")
+conn.commit()
+cur.close()
+conn.close()
+print("[DONE] Semua proses selesai.")
