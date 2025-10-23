@@ -1,9 +1,9 @@
--- 1️⃣ Buat sequence untuk Product
+sequence
 CREATE SEQUENCE purchase_seq START 1;
 
--- 2️⃣ Buat tabel Product
+
 CREATE TABLE purchase (
-    purchase_id VARCHAR(10) PRIMARY KEY,       -- Format: P0001
+    purchase_id VARCHAR(10) PRIMARY KEY,  
     purchase_date date not null,
 	arrival_date date not null,
 	supplier_id varchar(20),
@@ -11,17 +11,17 @@ CREATE TABLE purchase (
     
 );
 
--- 3️⃣ Buat function untuk generate ID otomatis
+
 CREATE OR REPLACE FUNCTION generate_purchase_id()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Gabungkan huruf P + angka dari sequence (4 digit)
+   
     NEW.purchase_id := 'PC' || LPAD(nextval('purchase_seq')::TEXT, 4, '0');
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- 4️⃣ Buat trigger agar ID di-generate otomatis setiap insert
+
 CREATE TRIGGER trg_purchase_id
 BEFORE INSERT ON purchase
 FOR EACH ROW
